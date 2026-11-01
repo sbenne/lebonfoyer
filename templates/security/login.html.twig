@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — LeBonFoyer{% endblock %}
+
+{% block body %}
+<section class="section">
+    <div class="container panel panel-narrow">
+        <h1 style="font-size:2rem;">Connexion</h1>
+        <p class="muted">Accédez à vos annonces, demandes et messages.</p>
+
+        {% if error %}
+            <div class="alert alert-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        <form method="post" action="{{ path('app_login') }}">
+            <div class="field">
+                <label for="username">Adresse email</label>
+                <input id="username" type="email" name="_username" value="{{ last_username }}" autocomplete="email" required autofocus>
+            </div>
+            <div class="field">
+                <label for="password">Mot de passe</label>
+                <input id="password" type="password" name="_password" autocomplete="current-password" required>
+            </div>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <div class="checkbox-row" style="margin-bottom:1rem;">
+                <input type="checkbox" id="remember_me" name="_remember_me" value="on">
+                <label for="remember_me">Se souvenir de moi</label>
+            </div>
+
+            <button class="btn btn-primary btn-block" type="submit">Se connecter</button>
+        </form>
+
+        <p class="small" style="margin-top:1.25rem;">
+            <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+        </p>
+        <p class="small muted">
+            Pas encore de compte ? <a href="{{ path('app_register') }}">Créer un compte</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

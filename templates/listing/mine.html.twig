@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes annonces — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <div class="section-head" style="margin-bottom:0;">
+            <div>
+                <h1>Mes annonces</h1>
+                <p>Gérez vos annonces, leurs photos et leur publication.</p>
+            </div>
+            <a class="btn btn-primary" href="{{ path('app_listing_new') }}">Nouvelle annonce</a>
+        </div>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container">
+        {% if listings is empty %}
+            <div class="empty-state">
+                <div class="emoji" aria-hidden="true">📝</div>
+                <h3>Vous n'avez pas encore d'annonce</h3>
+                <p class="muted">Créez une annonce pour proposer un chat ou un chien à l'adoption.</p>
+                <a class="btn btn-primary" href="{{ path('app_listing_new') }}">Créer ma première annonce</a>
+            </div>
+        {% else %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Animal</th>
+                            <th>Statut</th>
+                            <th>Ville</th>
+                            <th>Demandes</th>
+                            <th>Créée</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for listing in listings %}
+                            <tr>
+                                <td>
+                                    <strong><a href="{{ path('app_listing_show', {id: listing.id}) }}">{{ listing.name }}</a></strong><br>
+                                    <span class="muted small">{{ listing.species|species_label }} · {{ listing.birthDate ? listing.birthDate|age : '' }}</span>
+                                </td>
+                                <td><span class="badge badge-{{ listing.status.value }}">{{ listing.status|listing_status_label }}</span></td>
+                                <td>{{ listing.city }}</td>
+                                <td>{{ listing.applications|length }}</td>
+                                <td class="muted small">{{ listing.createdAt|fr_date }}</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a class="btn btn-ghost btn-sm" href="{{ path('app_listing_edit', {id: listing.id}) }}">Modifier</a>
+                                        {% if listing.status.value == 'published' or listing.status.value == 'reserved' %}
+                                            <a class="btn btn-secondary btn-sm" href="{{ path('app_listing_show', {id: listing.id}) }}">Voir</a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

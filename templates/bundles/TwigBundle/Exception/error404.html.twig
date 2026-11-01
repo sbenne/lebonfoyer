@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page introuvable — LeBonFoyer{% endblock %}
+{% block meta_description %}Cette page n’existe pas ou a été déplacée. Retrouvez les chats et chiens à adopter sur LeBonFoyer.{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block canonical %}{% endblock %}
+
+{% block body %}
+<section class="section">
+    <div class="container panel-narrow" style="text-align:center;">
+        <div class="emoji" aria-hidden="true" style="font-size:3.5rem;">🐾</div>
+        <h1>Page introuvable</h1>
+        <p class="lead">La page demandée n’existe pas ou a été déplacée.</p>
+
+        <form class="search-card" method="get" action="{{ path('app_listing_index') }}" style="margin:1.5rem 0;">
+            <div class="field">
+                <label for="error-species">Espèce</label>
+                <select id="error-species" name="species">
+                    <option value="">Chats et chiens</option>
+                    <option value="cat">Chat</option>
+                    <option value="dog">Chien</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="error-city">Ville</label>
+                <input id="error-city" type="search" name="city" placeholder="Ex. : Lyon, Nantes…">
+            </div>
+            <div class="field" style="display:flex;align-items:end;">
+                <button class="btn btn-primary btn-block" type="submit">Rechercher</button>
+            </div>
+        </form>
+
+        <p>
+            <a class="btn btn-secondary" href="{{ path('app_listing_index') }}">Voir toutes les annonces</a>
+            <a class="btn btn-ghost" href="{{ path('app_home') }}">Retour à l’accueil</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

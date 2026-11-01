@@ -1,0 +1,9 @@
+twig:
+    file_name_pattern: '*.twig'
+    globals:
+        app_name: 'LeBonFoyer'
+        handover_radius_km: '%env(int:HANDOVER_RADIUS_KM)%'
+
+when@test:
+    twig:
+        strict_variables: true

@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <h1>Administration</h1>
+        <p>Modération, utilisateurs et journal d'audit.</p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container">
+        <div class="grid-3">
+            <div class="panel"><span class="muted small">Annonces</span><h2 style="font-size:2rem;margin:.25rem 0;">{{ listingCount }}</h2><span class="muted small">{{ publishedCount }} visibles</span></div>
+            <div class="panel"><span class="muted small">Utilisateurs</span><h2 style="font-size:2rem;margin:.25rem 0;">{{ userCount }}</h2><span class="muted small">tous rôles</span></div>
+            <div class="panel"><span class="muted small">Demandes en attente</span><h2 style="font-size:2rem;margin:.25rem 0;">{{ pendingCount }}</h2><a class="small" href="{{ path('app_admin_applications') }}">Examiner →</a></div>
+        </div>
+
+        <div class="panel" style="margin-top:1.5rem;">
+            <div class="section-head" style="margin-bottom:1rem;">
+                <h2 style="font-size:1.2rem;margin:0;">Journal d'audit récent</h2>
+                <a class="btn btn-ghost btn-sm" href="{{ path('app_admin_audit') }}">Tout voir</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Date</th><th>Action</th><th>Acteur</th><th>Sujet</th></tr></thead>
+                    <tbody>
+                        {% for log in logs %}
+                            <tr>
+                                <td class="muted small">{{ log.createdAt|fr_datetime }}</td>
+                                <td><strong>{{ log.action }}</strong></td>
+                                <td>{{ log.actor ? log.actor.fullName : 'Système' }}</td>
+                                <td class="muted small">{{ log.subjectType ? log.subjectType|split('\\')|last : '' }} {{ log.subjectId ? '#' ~ log.subjectId : '' }}</td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="4" class="muted">Aucune entrée.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

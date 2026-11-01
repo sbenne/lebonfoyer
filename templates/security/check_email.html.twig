@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Email envoyé — LeBonFoyer{% endblock %}
+
+{% block body %}
+<section class="section">
+    <div class="container panel panel-narrow center">
+        <div style="font-size:3rem;">📧</div>
+        <h1 style="font-size:1.8rem;">Vérifiez votre boîte mail</h1>
+        <p class="muted">
+            Si un compte correspond à cette adresse, un email de réinitialisation vient d'être envoyé.
+            Le lien est valable une heure.
+        </p>
+        <p class="small muted">Pensez à vérifier vos spams. En environnement de développement, le mailer est désactivé.</p>
+        <a class="btn btn-ghost" href="{{ path('app_login') }}">Retour à la connexion</a>
+    </div>
+</section>
+{% endblock %}

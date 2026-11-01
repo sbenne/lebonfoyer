@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Annonces de {{ species == 'cat' ? 'chats' : (species == 'dog' ? 'chiens' : 'chats et chiens') }} à adopter{% if city %} à {{ city }}{% endif %}{% if page > 1 %} — page {{ page }}{% endif %} — LeBonFoyer{% endblock %}
+{% block meta_description %}{{ total }} annonce{{ total > 1 ? 's' : '' }} de {{ species == 'cat' ? 'chats' : (species == 'dog' ? 'chiens' : 'chats et chiens') }} à adopter{% if city %} à {{ city }}{% endif %} : animaux identifiés, sevrage contrôlé et remise en mains propres.{% endblock %}
+
+{% block structured_data %}
+    {{ seo_json_ld([
+        seo_breadcrumbs([
+            {'name': 'Accueil', 'url': seo_route('app_home')},
+            {'name': 'Annonces', 'url': seo_route('app_listing_index')}
+        ]),
+        seo_item_list(listings, 'Annonces de chats et chiens à adopter')
+    ]) }}
+{% endblock %}
+
+{% block body %}
+<nav class="breadcrumbs container" aria-label="Fil d'Ariane">
+    <a href="{{ path('app_home') }}">Accueil</a>
+    <span aria-hidden="true">›</span>
+    <span aria-current="page">Annonces</span>
+</nav>
+<div class="page-head">
+    <div class="container">
+        <h1>Animaux à adopter</h1>
+        <p>{{ total }} annonce{{ total > 1 ? 's' : '' }} d'animaux identifiés, sevrés et remis en mains propres.</p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container">
+        <form class="panel" method="get" action="{{ path('app_listing_index') }}">
+            <div class="grid-3">
+                <div class="field">
+                    <label for="species">Espèce</label>
+                    <select id="species" name="species">
+                        <option value="">Toutes</option>
+                        <option value="cat" {{ species == 'cat' ? 'selected' }}>Chat</option>
+                        <option value="dog" {{ species == 'dog' ? 'selected' }}>Chien</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="city">Ville</label>
+                    <input id="city" type="search" name="city" value="{{ city }}" placeholder="Ex. : Lyon">
+                </div>
+                <div class="field">
+                    <label for="q">Recherche</label>
+                    <input id="q" type="search" name="q" value="{{ query }}" placeholder="Nom, mot-clé…">
+                </div>
+            </div>
+            <div class="form-actions">
+                <div class="field" style="margin:0;min-width:200px;">
+                    <label for="sort">Trier par</label>
+                    <select id="sort" name="sort">
+                        <option value="recent" {{ sort == 'recent' ? 'selected' }}>Plus récentes</option>
+                        <option value="oldest" {{ sort == 'oldest' ? 'selected' }}>Plus anciennes</option>
+                        <option value="name" {{ sort == 'name' ? 'selected' }}>Nom</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" type="submit">Filtrer</button>
+                <a class="btn btn-ghost" href="{{ path('app_listing_index') }}">Réinitialiser</a>
+            </div>
+        </form>
+
+        <div class="section-head" style="margin-top:2rem;">
+            <p>{{ total }} résultat{{ total > 1 ? 's' : '' }}</p>
+        </div>
+
+        {% if listings is empty %}
+            <div class="empty-state">
+                <div class="emoji" aria-hidden="true">🔎</div>
+                <h3>Aucune annonce ne correspond à votre recherche</h3>
+                <p class="muted">Essayez d'élargir la ville ou de retirer un filtre.</p>
+                <a class="btn btn-primary" href="{{ path('app_listing_index') }}">Voir toutes les annonces</a>
+            </div>
+        {% else %}
+            <div class="listing-grid">
+                {% for listing in listings %}
+                    {{ include('listing/_card.html.twig', {listing: listing}) }}
+                {% endfor %}
+            </div>
+
+            {% if pages > 1 %}
+                <nav class="pagination" aria-label="Pagination">
+                    {% if page > 1 %}
+                        <a href="{{ path('app_listing_index', {species: species, city: city, q: query, sort: sort, page: page - 1}) }}">← Précédent</a>
+                    {% endif %}
+                    {% for p in 1..pages %}
+                        {% if p == page %}
+                            <span class="current" aria-current="page">{{ p }}</span>
+                        {% else %}
+                            <a href="{{ path('app_listing_index', {species: species, city: city, q: query, sort: sort, page: p}) }}">{{ p }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page < pages %}
+                        <a href="{{ path('app_listing_index', {species: species, city: city, q: query, sort: sort, page: page + 1}) }}">Suivant →</a>
+                    {% endif %}
+                </nav>
+            {% endif %}
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

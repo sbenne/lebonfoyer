@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions légales — LeBonFoyer{% endblock %}
+{% block meta_description %}Éditeur, hébergement, activité et signalement des annonces : les mentions légales de LeBonFoyer, plateforme de mise en relation pour l’adoption responsable de chats et de chiens.{% endblock %}
+{% block structured_data %}
+    {{ seo_json_ld(seo_breadcrumbs([
+        {'name': 'Accueil', 'url': seo_route('app_home')},
+        {'name': 'Mentions légales', 'url': seo_route('app_legal_mentions')}
+    ])) }}
+{% endblock %}
+
+{% block body %}
+<nav class="breadcrumbs container" aria-label="Fil d'Ariane">
+    <a href="{{ path('app_home') }}">Accueil</a>
+    <span aria-hidden="true">›</span>
+    <span aria-current="page">Mentions légales</span>
+</nav>
+<div class="page-head">
+    <div class="container"><h1>Mentions légales</h1></div>
+</div>
+<section class="section-sm">
+    <div class="container prose">
+        <h2>Éditeur du site</h2>
+        <p>LeBonFoyer — plateforme d'adoption de chats et de chiens.<br>
+        Contact : contact@lebonfoyer.local</p>
+
+        <h2>Hébergement</h2>
+        <p>Ce site est hébergé en France. Les coordonnées de l'hébergeur sont disponibles sur demande.</p>
+
+        <h2>Activité</h2>
+        <p>LeBonFoyer est un service de mise en relation. La plateforme ne vend pas d'animaux, n'organise pas de transport et n'accepte aucun paiement. Les échanges financiers entre particuliers sont interdits.</p>
+
+        <h2>Propriété intellectuelle</h2>
+        <p>Les textes, éléments graphiques et photographies déposés par les utilisateurs restent leur propriété. Toute reproduction sans autorisation est interdite.</p>
+
+        <h2>Signalement</h2>
+        <p>Pour signaler une annonce contraire aux règles de bien-être animal, écrivez à signalement@lebonfoyer.local. Les annonces signalées peuvent être suspendues immédiatement.</p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ listing.id ? 'Modifier' : 'Créer' }} une annonce — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <p class="small"><a href="{{ path('app_listing_mine') }}">← Mes annonces</a></p>
+        <h1>{{ listing.id ? 'Modifier l\'annonce' : 'Nouvelle annonce' }}</h1>
+        <p>Renseignez les informations obligatoires. L'annonce reste en brouillon jusqu'à sa publication.</p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container split">
+        <div>
+            <div class="panel">
+                {{ form_start(form) }}
+                    {{ form_errors(form) }}
+                    <div class="grid-2">
+                        {{ form_row(form.species) }}
+                        {{ form_row(form.name) }}
+                        {{ form_row(form.birthDate) }}
+                        {{ form_row(form.birthDateEstimated) }}
+                        {{ form_row(form.identificationNumber) }}
+                        {{ form_row(form.city) }}
+                        {{ form_row(form.postalCode) }}
+                    </div>
+                    {{ form_row(form.description) }}
+                    {{ form_row(form.price, {help: 'Laissez vide pour un don. Un particulier ne peut pas demander de prix.'}) }}
+                    <div class="form-actions">
+                        <button class="btn btn-primary" type="submit">Enregistrer</button>
+                        <a class="btn btn-ghost" href="{{ path('app_listing_mine') }}">Annuler</a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+
+            {% if questionsForm %}
+                <div class="panel">
+                    <h2>Questionnaire adoptant</h2>
+                    <p class="muted small">Jusqu'à 10 questions, 300 caractères maximum chacune. Elles seront posées à chaque adoptant.</p>
+                    {{ form_start(questionsForm) }}
+                        {{ form_errors(questionsForm) }}
+                        {% for i in 0..9 %}
+                            {{ form_row(questionsForm['question_' ~ i]) }}
+                        {% endfor %}
+                        <div class="form-actions">
+                            <button class="btn btn-secondary" type="submit">Mettre à jour le questionnaire</button>
+                        </div>
+                    {{ form_end(questionsForm) }}
+                </div>
+            {% endif %}
+
+            {% if listing.id %}
+                <div class="panel">
+                    <h2>Photos</h2>
+                    <p class="muted small">JPEG, PNG, GIF ou WebP — 8 Mo maximum par photo. Les images sont converties en WebP.</p>
+
+                    {% if listing.photos|length > 0 %}
+                        <div class="grid-3" style="margin-bottom:1.25rem;">
+                            {% for photo in listing.photos %}
+                                <div class="panel" style="padding:.6rem;">
+                                    <img src="{{ asset(photo.filename) }}" alt="Photo de {{ listing.name }}" style="border-radius:8px;aspect-ratio:4/3;object-fit:cover;">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.5rem;">
+                                        <span class="small muted">{{ photo.isCover ? 'Couverture' : '' }}</span>
+                                        <form method="post" action="{{ path('app_listing_photo_delete', {id: listing.id, photoId: photo.id}) }}" class="inline-form">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_photo_' ~ photo.id) }}">
+                                            <button class="btn btn-danger btn-sm" type="submit">Supprimer</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" action="{{ path('app_listing_photo_upload', {id: listing.id}) }}" enctype="multipart/form-data">
+                        <input type="hidden" name="_token" value="{{ csrf_token('photos_listing_' ~ listing.id) }}">
+                        <div class="field">
+                            <label for="photos">Ajouter des photos</label>
+                            <input id="photos" type="file" name="photos[]" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+                        </div>
+                        <button class="btn btn-secondary" type="submit">Téléverser</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+
+        <aside>
+            <div class="panel">
+                <h3>Statut</h3>
+                <p><span class="badge badge-{{ listing.status.value }}">{{ listing.status|listing_status_label }}</span></p>
+                {% if listing.publishedAt %}<p class="muted small">Publiée le {{ listing.publishedAt|fr_datetime }}</p>{% endif %}
+
+                {% if listing.id %}
+                    {% if listing.status.value != 'published' %}
+                        <form method="post" action="{{ path('app_listing_publish', {id: listing.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('publish_listing_' ~ listing.id) }}">
+                            <button class="btn btn-primary btn-block" type="submit">Publier l'annonce</button>
+                        </form>
+                    {% else %}
+                        <a class="btn btn-ghost btn-block" href="{{ path('app_listing_show', {id: listing.id}) }}">Voir l'annonce publique</a>
+                        <form method="post" action="{{ path('app_listing_suspend', {id: listing.id}) }}" style="margin-top:.6rem;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('suspend_listing_' ~ listing.id) }}">
+                            <button class="btn btn-ghost btn-block" type="submit">Suspendre</button>
+                        </form>
+                    {% endif %}
+
+                    <form method="post" action="{{ path('app_listing_delete', {id: listing.id}) }}" style="margin-top:.6rem;" onsubmit="return confirm('Supprimer définitivement cette annonce ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_listing_' ~ listing.id) }}">
+                        <button class="btn btn-danger btn-block" type="submit">Supprimer l'annonce</button>
+                    </form>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <h3>Rappel</h3>
+                <ul class="muted small">
+                    <li>Date de naissance obligatoire, non future.</li>
+                    <li>Identification par puce ou tatouage obligatoire.</li>
+                    <li>Particulier : don uniquement, aucun prix.</li>
+                    <li>Remise en mains propres, jamais de livraison.</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

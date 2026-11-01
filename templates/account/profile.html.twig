@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <h1>Mon profil</h1>
+        <p>Vos informations servent à vérifier les conditions d'adoption et à vous contacter.</p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container split">
+        <div class="panel">
+            {{ form_start(form) }}
+                {{ form_errors(form) }}
+                <div class="grid-2">
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.phone) }}
+                    {{ form_row(form.firstName) }}
+                    {{ form_row(form.lastName) }}
+                    {{ form_row(form.city) }}
+                    {{ form_row(form.postalCode) }}
+                </div>
+
+                {% if form.housingType is defined %}
+                    <fieldset>
+                        <legend>Logement</legend>
+                        {{ form_row(form.housingType) }}
+                        <div class="choice-list">
+                            {{ form_row(form.hasGarden) }}
+                            {{ form_row(form.hasTerrace) }}
+                            {{ form_row(form.hasOtherAnimals) }}
+                            {{ form_row(form.hasChildren) }}
+                        </div>
+                    </fieldset>
+                {% endif %}
+
+                {% if form.cedantStatus is defined %}
+                    <fieldset>
+                        <legend>Profil cédant</legend>
+                        {{ form_row(form.cedantStatus) }}
+                        <div class="grid-2">
+                            {{ form_row(form.organizationName) }}
+                            {{ form_row(form.siren) }}
+                            {{ form_row(form.rna) }}
+                            {{ form_row(form.breedingNumber) }}
+                        </div>
+                    </fieldset>
+                {% endif %}
+
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">Enregistrer</button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+
+        <aside>
+            <div class="panel">
+                <h3>Statut du compte</h3>
+                <p>Rôle : <strong>{{ app.user.type|user_type_label }}</strong></p>
+                <p>
+                    Email :
+                    {% if app.user.verified %}
+                        <span class="badge badge-approved">Vérifié</span>
+                    {% else %}
+                        <span class="badge badge-pending">Non vérifié</span>
+                    {% endif %}
+                </p>
+                {% if app.user.cedantStatus %}
+                    <p>Statut cédant : <strong>{{ app.user.cedantStatus|cedant_status_label }}</strong></p>
+                {% endif %}
+                <p class="muted small">Membre depuis le {{ app.user.createdAt|fr_date }}</p>
+            </div>
+
+            <div class="panel">
+                <h3>Sécurité et données</h3>
+                <a class="btn btn-ghost btn-block" href="{{ path('app_account_password') }}">Changer mon mot de passe</a>
+                <a class="btn btn-ghost btn-block" style="margin-top:.5rem;" href="{{ path('app_account_export') }}">Exporter mes données (JSON)</a>
+            </div>
+
+            <div class="panel">
+                <h3>Supprimer mon compte</h3>
+                <p class="muted small">Votre compte sera désactivé et vos données personnelles anonymisées. Vos annonces seront suspendues.</p>
+                <form method="post" action="{{ path('app_account_delete', {id: app.user.id}) }}" onsubmit="return confirm('Supprimer définitivement votre compte ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_account_' ~ app.user.id) }}">
+                    <button class="btn btn-danger btn-block" type="submit">Supprimer mon compte</button>
+                </form>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

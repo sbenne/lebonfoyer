@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demande pour {{ application.listing ? application.listing.name : 'un animal' }} — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <p class="small"><a href="{{ path('app_application_mine') }}">← Mes demandes</a></p>
+        <h1>Demande d'adoption</h1>
+        <p>
+            Statut :
+            <span class="badge badge-{{ application.status.value }}">{{ application.status|application_status_label }}</span>
+        </p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container split">
+        <div>
+            <div class="panel">
+                <h2 style="font-size:1.25rem;">{{ application.listing ? application.listing.name : 'Annonce supprimée' }}</h2>
+                {% if application.listing %}
+                    <p class="muted small">
+                        {{ application.listing.species|species_label }}
+                        · {{ application.listing.city }}
+                        · <a href="{{ path('app_listing_show', {id: application.listing.id}) }}">Voir l'annonce</a>
+                    </p>
+                {% endif %}
+                <div class="detail-meta">
+                    <span>Remise prévue le <strong>{{ application.handoverDate ? application.handoverDate|fr_date : '—' }}</strong></span>
+                    <span>Demande envoyée le {{ application.createdAt|fr_datetime }}</span>
+                    {% if application.decidedAt %}<span>Décision le {{ application.decidedAt|fr_datetime }}</span>{% endif %}
+                </div>
+
+                {% if application.warningConfirmed %}
+                    <div class="notice notice-warning">
+                        <p class="small">Avertissement de sevrage confirmé par l'adoptant le {{ application.warningConfirmedAt ? application.warningConfirmedAt|fr_datetime : '—' }}.</p>
+                    </div>
+                {% endif %}
+
+                {% if application.message %}
+                    <h3>Message de l'adoptant</h3>
+                    <p>{{ application.message|nl2br }}</p>
+                {% endif %}
+
+                {% if application.answers|length > 0 %}
+                    <h3 style="margin-top:1.5rem;">Réponses au questionnaire</h3>
+                    {% for answer in application.answers %}
+                        <div class="question-block">
+                            <strong>{{ answer.question ? answer.question.label : 'Question supprimée' }}</strong>
+                            <p style="margin:.4rem 0 0;">{{ answer.answer|nl2br }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <h2 style="font-size:1.15rem;">Historique</h2>
+                <ul class="muted small">
+                    <li>Demande créée le {{ application.createdAt|fr_datetime }}.</li>
+                    {% if application.warningConfirmedAt %}<li>Avertissement de sevrage confirmé le {{ application.warningConfirmedAt|fr_datetime }}.</li>{% endif %}
+                    {% if application.decidedAt %}<li>Décision enregistrée le {{ application.decidedAt|fr_datetime }}.</li>{% endif %}
+                    {% if application.handedOverAt %}<li>Remise effectuée le {{ application.handedOverAt|fr_datetime }}.</li>{% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <aside>
+            <div class="panel">
+                <h3>Participants</h3>
+                <div class="seller-card" style="margin-bottom:.8rem;">
+                    <div class="avatar">{{ application.adoptant ? application.adoptant.fullName|initials : '?' }}</div>
+                    <div>
+                        <strong>{{ application.adoptant ? application.adoptant.fullName : 'Adoptant' }}</strong><br>
+                        <span class="muted small">Adoptant</span>
+                    </div>
+                </div>
+                {% if application.listing and application.listing.cedant %}
+                    <div class="seller-card">
+                        <div class="avatar">{{ application.listing.cedant.fullName|initials }}</div>
+                        <div>
+                            <strong>{{ application.listing.cedant.fullName }}</strong><br>
+                            <span class="muted small">Cédant</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <h3>Actions</h3>
+
+                {% if app.user.id == application.adoptant.id and application.active %}
+                    <form method="post" action="{{ path('app_application_cancel', {id: application.id}) }}" onsubmit="return confirm('Annuler votre demande ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('cancel_application_' ~ application.id) }}">
+                        <button class="btn btn-danger btn-block" type="submit">Annuler ma demande</button>
+                    </form>
+                {% endif %}
+
+                {% if application.listing and app.user.id == application.listing.cedant.id %}
+                    {% if application.pending %}
+                        <form method="post" action="{{ path('app_application_approve', {id: application.id}) }}" style="margin-bottom:.6rem;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('approve_application_' ~ application.id) }}">
+                            <button class="btn btn-primary btn-block" type="submit">Accepter la demande</button>
+                        </form>
+                        <form method="post" action="{{ path('app_application_reject', {id: application.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('reject_application_' ~ application.id) }}">
+                            <button class="btn btn-danger btn-block" type="submit">Refuser la demande</button>
+                        </form>
+                    {% elseif application.approved %}
+                        <form method="post" action="{{ path('app_application_handover', {id: application.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('handover_application_' ~ application.id) }}">
+                            <button class="btn btn-primary btn-block" type="submit">Confirmer la remise</button>
+                        </form>
+                        <p class="muted small" style="margin-top:.5rem;">À confirmer une fois l'animal remis en mains propres.</p>
+                    {% endif %}
+                {% endif %}
+
+                {% if application.listing and application.listing.cedant %}
+                    <a class="btn btn-ghost btn-block" style="margin-top:.6rem;" href="{{ path('app_message_index') }}">Ouvrir la messagerie</a>
+                {% endif %}
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

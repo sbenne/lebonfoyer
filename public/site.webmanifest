@@ -1,0 +1,28 @@
+{
+    "name": "LeBonFoyer — Adopter un chat ou un chien en confiance",
+    "short_name": "LeBonFoyer",
+    "description": "Plateforme française d’adoption responsable de chats et de chiens : annonces vérifiées, sevrage contrôlé et remise en mains propres.",
+    "lang": "fr-FR",
+    "dir": "ltr",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#fbf7f0",
+    "theme_color": "#1f6f54",
+    "categories": ["lifestyle", "pets"],
+    "icons": [
+        {
+            "src": "/images/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/images/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes demandes d'adoption — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <h1>Mes demandes</h1>
+        <p>Suivez l'avancement de vos demandes d'adoption.</p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container">
+        {% if applications is empty %}
+            <div class="empty-state">
+                <div class="emoji" aria-hidden="true">📬</div>
+                <h3>Aucune demande pour le moment</h3>
+                <p class="muted">Parcourez les annonces et envoyez votre première demande d'adoption.</p>
+                <a class="btn btn-primary" href="{{ path('app_listing_index') }}">Voir les annonces</a>
+            </div>
+        {% else %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Animal</th>
+                            <th>Cédant</th>
+                            <th>Remise prévue</th>
+                            <th>Statut</th>
+                            <th>Demande</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for application in applications %}
+                            <tr>
+                                <td>
+                                    {% if application.listing %}
+                                        <strong><a href="{{ path('app_listing_show', {id: application.listing.id}) }}">{{ application.listing.name }}</a></strong><br>
+                                        <span class="muted small">{{ application.listing.species|species_label }} · {{ application.listing.city }}</span>
+                                    {% else %}
+                                        <span class="muted">Annonce supprimée</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ application.listing and application.listing.cedant ? application.listing.cedant.fullName : '—' }}</td>
+                                <td>{{ application.handoverDate ? application.handoverDate|fr_date : '—' }}</td>
+                                <td><span class="badge badge-{{ application.status.value }}">{{ application.status|application_status_label }}</span></td>
+                                <td class="muted small">{{ application.createdAt|fr_date }}</td>
+                                <td><a class="btn btn-ghost btn-sm" href="{{ path('app_application_show', {id: application.id}) }}">Détail</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

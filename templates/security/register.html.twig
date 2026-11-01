@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un compte — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <h1>Créer un compte</h1>
+        <p>Choisissez votre rôle. Vous pourrez compléter votre profil après l'inscription.</p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container panel-narrow" style="max-width:760px;">
+        {{ form_start(registrationForm) }}
+            {{ form_errors(registrationForm) }}
+
+            <div class="grid-2">
+                {{ form_row(registrationForm.email) }}
+                {{ form_row(registrationForm.phone) }}
+                {{ form_row(registrationForm.firstName) }}
+                {{ form_row(registrationForm.lastName) }}
+            </div>
+
+            {{ form_row(registrationForm.plainPassword) }}
+            {{ form_row(registrationForm.type) }}
+
+            <fieldset>
+                <legend>Profil cédant (si vous proposez un animal)</legend>
+                {{ form_row(registrationForm.cedantStatus) }}
+                <div class="grid-2">
+                    {{ form_row(registrationForm.organizationName) }}
+                    {{ form_row(registrationForm.siren) }}
+                    {{ form_row(registrationForm.rna) }}
+                    {{ form_row(registrationForm.breedingNumber) }}
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Localisation et logement</legend>
+                <div class="grid-2">
+                    {{ form_row(registrationForm.city) }}
+                    {{ form_row(registrationForm.postalCode) }}
+                </div>
+                {{ form_row(registrationForm.housingType) }}
+                <div class="choice-list">
+                    {{ form_row(registrationForm.hasGarden) }}
+                    {{ form_row(registrationForm.hasTerrace) }}
+                    {{ form_row(registrationForm.hasOtherAnimals) }}
+                    {{ form_row(registrationForm.hasChildren) }}
+                </div>
+            </fieldset>
+
+            <div class="checkbox-row" style="margin:1rem 0;">
+                {{ form_widget(registrationForm.agreeTerms) }}
+                {{ form_label(registrationForm.agreeTerms) }}
+                {{ form_errors(registrationForm.agreeTerms) }}
+            </div>
+
+            <button class="btn btn-primary btn-block" type="submit">Créer mon compte</button>
+        {{ form_end(registrationForm) }}
+
+        <p class="small muted" style="margin-top:1rem;">
+            Déjà inscrit ? <a href="{{ path('app_login') }}">Se connecter</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

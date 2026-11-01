@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demandes d'adoption — Administration{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <h1>Demandes d'adoption</h1>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Animal</th><th>Adoptant</th><th>Cédant</th><th>Remise</th><th>Statut</th><th>Créée</th><th></th></tr></thead>
+                <tbody>
+                    {% for application in applications %}
+                        <tr>
+                            <td>{{ application.listing ? application.listing.name : '—' }}</td>
+                            <td>{{ application.adoptant ? application.adoptant.fullName : '—' }}</td>
+                            <td>{{ application.listing and application.listing.cedant ? application.listing.cedant.fullName : '—' }}</td>
+                            <td>{{ application.handoverDate ? application.handoverDate|fr_date : '—' }}</td>
+                            <td><span class="badge badge-{{ application.status.value }}">{{ application.status|application_status_label }}</span></td>
+                            <td class="muted small">{{ application.createdAt|fr_date }}</td>
+                            <td><a class="btn btn-ghost btn-sm" href="{{ path('app_application_show', {id: application.id}) }}">Voir</a></td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="7" class="muted">Aucune demande.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

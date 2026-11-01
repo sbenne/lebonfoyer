@@ -1,0 +1,33 @@
+parameters:
+    app.upload_dir: '%kernel.project_dir%/public/uploads/listings'
+    app.upload_public_path: '/uploads/listings'
+    app.handover_radius_km: '%env(int:HANDOVER_RADIUS_KM)%'
+    app.seo_contact_email: 'contact@lebonfoyer.local'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Twig\AppExtension:
+        tags: ['twig.extension']
+
+    App\Service\PhotoUploader:
+        arguments:
+            $uploadDir: '%app.upload_dir%'
+            $publicPath: '%app.upload_public_path%'
+
+    App\Seo\SeoManager:
+        arguments:
+            $defaultUri: '%env(DEFAULT_URI)%'
+            $contactEmail: '%app.seo_contact_email%'
+
+    App\EventSubscriber\SecurityHeadersSubscriber:
+        arguments:
+            $environment: '%kernel.environment%'

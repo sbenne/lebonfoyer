@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Messages — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <h1>Messages</h1>
+        <p>Échangez avec les adoptants et les cédants.</p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container panel-narrow" style="max-width:820px;">
+        {% if conversations is empty %}
+            <div class="empty-state">
+                <div class="emoji" aria-hidden="true">💬</div>
+                <h3>Aucune conversation</h3>
+                <p class="muted">Contactez un cédant depuis une annonce pour démarrer un échange.</p>
+                <a class="btn btn-primary" href="{{ path('app_listing_index') }}">Voir les annonces</a>
+            </div>
+        {% else %}
+            <div class="conversation-list">
+                {% for conversation in conversations %}
+                    {% set other = conversation.otherParticipant(app.user) %}
+                    <a class="conversation-item" href="{{ path('app_message_show', {id: conversation.id}) }}">
+                        <div class="avatar">{{ other ? other.fullName|initials : '?' }}</div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="display:flex;justify-content:space-between;gap:.5rem;">
+                                <strong>{{ other ? other.fullName : 'Conversation' }}</strong>
+                                <span class="muted small">{{ conversation.updatedAt|time_ago }}</span>
+                            </div>
+                            <div class="preview">
+                                {% if conversation.listing %}À propos de {{ conversation.listing.name }} — {% endif %}
+                                {% set last = conversation.lastMessage %}
+                                {{ last ? last.body|striptags|slice(0, 90) : 'Aucun message' }}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conversation — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <p class="small"><a href="{{ path('app_message_index') }}">← Messages</a></p>
+        <h1 style="font-size:1.7rem;">{{ other ? other.fullName : 'Conversation' }}</h1>
+        {% if conversation.listing %}
+            <p class="muted">À propos de <a href="{{ path('app_listing_show', {id: conversation.listing.id}) }}">{{ conversation.listing.name }}</a> · {{ conversation.listing.city }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container panel-narrow" style="max-width:820px;">
+        <div class="chat" id="chat">
+            {% for message in conversation.messages %}
+                <div class="bubble {{ message.sender and message.sender.id == app.user.id ? 'mine' : '' }}">
+                    {{ message.body|raw }}
+                    <span class="time">{{ message.createdAt|fr_datetime }}{% if message.sender %} · {{ message.sender.fullName }}{% endif %}</span>
+                </div>
+            {% else %}
+                <p class="muted center">Aucun message pour l'instant. Écrivez le premier !</p>
+            {% endfor %}
+        </div>
+
+        <div class="panel" style="margin-top:1.25rem;">
+            {{ form_start(form, {action: path('app_message_send', {id: conversation.id})}) }}
+                {{ form_errors(form) }}
+                {{ form_row(form.body) }}
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">Envoyer</button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+
+        <p class="muted small">Ne partagez pas d'informations bancaires. La plateforme n'accepte aucun paiement.</p>
+    </div>
+</section>
+{% endblock %}

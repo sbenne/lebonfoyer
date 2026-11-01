@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <h1>Utilisateurs</h1>
+        <p>Activer ou désactiver un compte.</p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Vérifié</th><th>Statut</th><th>Inscription</th><th></th></tr></thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td><strong>{{ user.fullName }}</strong></td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.type|user_type_label }}</td>
+                            <td>{{ user.verified ? 'Oui' : 'Non' }}</td>
+                            <td><span class="badge {{ user.active ? 'badge-approved' : 'badge-rejected' }}">{{ user.active ? 'Actif' : 'Désactivé' }}</span></td>
+                            <td class="muted small">{{ user.createdAt|fr_date }}</td>
+                            <td>
+                                <form method="post" action="{{ path('app_admin_user_toggle', {id: user.id}) }}" class="inline-form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('admin_toggle_user_' ~ user.id) }}">
+                                    <button class="btn btn-ghost btn-sm" type="submit">{{ user.active ? 'Désactiver' : 'Réactiver' }}</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

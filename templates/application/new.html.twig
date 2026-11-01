@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver {{ listing.name }} — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <p class="small"><a href="{{ path('app_listing_show', {id: listing.id}) }}">← Retour à l'annonce</a></p>
+        <h1>Réserver {{ listing.name }}</h1>
+        <p>Votre demande sera transmise au cédant. La réservation ne devient ferme qu'après son acceptation.</p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container split">
+        <div class="panel">
+            {{ form_start(form) }}
+                {{ form_errors(form) }}
+
+                {% if listing.birthDate %}
+                    <div class="notice notice-info">
+                        <h3>Calendrier de sevrage</h3>
+                        <p>
+                            Pour {{ listing.name }}, la remise est possible à partir du
+                            <strong>{{ earliest_handover(listing.species, listing.birthDate)|fr_date }}</strong>
+                            {% if listing.species.value == 'cat' %}
+                                (âge recommandé : {{ recommended_handover(listing.species, listing.birthDate)|fr_date }}).
+                            {% else %}
+                                .
+                            {% endif %}
+                        </p>
+                        <p class="small muted">Une date antérieure au sevrage sera refusée. Une date avant l'âge recommandé nécessitera votre confirmation explicite.</p>
+                    </div>
+                {% endif %}
+
+                {{ form_row(form.handoverDate) }}
+                {{ form_row(form.message) }}
+
+                {% if listing.questions|length > 0 %}
+                    <h2 style="margin-top:1.5rem;">Questions du cédant</h2>
+                    {% for question in listing.questions %}
+                        <div class="question-block">
+                            {{ form_row(form['answer_' ~ question.id]) }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="checkbox-row" style="margin:1rem 0;">
+                    {{ form_widget(form.warningConfirmed) }}
+                    {{ form_label(form.warningConfirmed) }}
+                    {{ form_errors(form.warningConfirmed) }}
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">Envoyer ma demande</button>
+                    <a class="btn btn-ghost" href="{{ path('app_listing_show', {id: listing.id}) }}">Annuler</a>
+                </div>
+            {{ form_end(form) }}
+        </div>
+
+        <aside>
+            <div class="panel">
+                <h3>{{ listing.name }}</h3>
+                <p class="muted small">{{ listing.species|species_label }} · {{ listing.birthDate ? listing.birthDate|age : '' }} · {{ listing.city }}</p>
+                <p>{{ listing.price|price_label(listing.cedant ? listing.cedant.cedantStatus : null) }}</p>
+                <hr>
+                <p class="small muted">En envoyant cette demande, vous acceptez d'être recontacté par le cédant et de respecter les règles de bien-être animal.</p>
+            </div>
+            <div class="panel">
+                <h3>Et ensuite ?</h3>
+                <ol class="muted small">
+                    <li>Le cédant examine votre demande et vos réponses.</li>
+                    <li>Il peut l'accepter ou la refuser.</li>
+                    <li>En cas d'acceptation, l'annonce est réservée et une conversation s'ouvre.</li>
+                    <li>La remise se fait en mains propres à la date convenue.</li>
+                </ol>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

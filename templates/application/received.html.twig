@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demandes reçues — LeBonFoyer{% endblock %}
+
+{% block body %}
+<div class="page-head">
+    <div class="container">
+        <h1>Demandes reçues</h1>
+        <p>Examinez les candidatures et répondez à chaque adoptant.</p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container">
+        {% if applications is empty %}
+            <div class="empty-state">
+                <div class="emoji" aria-hidden="true">📭</div>
+                <h3>Aucune demande reçue</h3>
+                <p class="muted">Publiez une annonce pour commencer à recevoir des demandes.</p>
+                <a class="btn btn-primary" href="{{ path('app_listing_mine') }}">Mes annonces</a>
+            </div>
+        {% else %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Animal</th>
+                            <th>Adoptant</th>
+                            <th>Remise souhaitée</th>
+                            <th>Statut</th>
+                            <th>Reçue</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for application in applications %}
+                            <tr>
+                                <td>
+                                    {% if application.listing %}
+                                        <strong>{{ application.listing.name }}</strong><br>
+                                        <span class="muted small">{{ application.listing.city }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ application.adoptant ? application.adoptant.fullName : '—' }}<br>
+                                    <span class="muted small">{{ application.adoptant ? application.adoptant.email : '' }}</span>
+                                </td>
+                                <td>{{ application.handoverDate ? application.handoverDate|fr_date : '—' }}</td>
+                                <td><span class="badge badge-{{ application.status.value }}">{{ application.status|application_status_label }}</span></td>
+                                <td class="muted small">{{ application.createdAt|fr_date }}</td>
+                                <td><a class="btn btn-ghost btn-sm" href="{{ path('app_application_show', {id: application.id}) }}">Examiner</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

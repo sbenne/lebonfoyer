@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confidentialité et RGPD — LeBonFoyer{% endblock %}
+{% block meta_description %}Données collectées, finalités, durées de conservation et droits RGPD sur LeBonFoyer : export, rectification et suppression de compte accessibles depuis votre espace personnel.{% endblock %}
+{% block structured_data %}
+    {{ seo_json_ld(seo_breadcrumbs([
+        {'name': 'Accueil', 'url': seo_route('app_home')},
+        {'name': 'Confidentialité', 'url': seo_route('app_privacy')}
+    ])) }}
+{% endblock %}
+
+{% block body %}
+<nav class="breadcrumbs container" aria-label="Fil d'Ariane">
+    <a href="{{ path('app_home') }}">Accueil</a>
+    <span aria-hidden="true">›</span>
+    <span aria-current="page">Confidentialité</span>
+</nav>
+<div class="page-head">
+    <div class="container">
+        <h1>Confidentialité &amp; RGPD</h1>
+        <p>Nous ne collectons que les données nécessaires à l'adoption responsable.</p>
+    </div>
+</div>
+<section class="section-sm">
+    <div class="container prose">
+        <h2>Responsable du traitement</h2>
+        <p>LeBonFoyer, contact : dpo@lebonfoyer.local.</p>
+
+        <h2>Données collectées</h2>
+        <ul>
+            <li>Identité et coordonnées : nom, prénom, email, téléphone, ville, code postal.</li>
+            <li>Profil adoptant : type de logement, jardin, terrasse, autres animaux, enfants.</li>
+            <li>Profil cédant : statut, SIREN/RNA, numéro d'élevage, informations sur l'animal.</li>
+            <li>Activité : annonces, demandes, messages, journal d'audit.</li>
+        </ul>
+
+        <h2>Finalités</h2>
+        <p>Gestion des comptes, mise en relation, vérification des règles de bien-être, sécurité, modération et respect des obligations légales.</p>
+
+        <h2>Durées de conservation</h2>
+        <ul>
+            <li>Compte actif : pendant la durée d'utilisation.</li>
+            <li>Compte supprimé : anonymisation immédiate, conservation des traces d'audit 12 mois.</li>
+            <li>Messages : 24 mois après le dernier échange.</li>
+            <li>Annonces clôturées : 12 mois.</li>
+        </ul>
+
+        <h2>Vos droits</h2>
+        <p>Vous pouvez accéder à vos données, les exporter, les rectifier ou demander la suppression de votre compte depuis votre espace personnel. Pour toute question : dpo@lebonfoyer.local.</p>
+
+        <h2>Sous-traitants et transferts</h2>
+        <p>Les emails transactionnels sont envoyés via un prestataire européen. Aucune donnée n'est revendue. Les intégrations de stockage externe (Google Drive, Microsoft OneDrive) sont optionnelles et limitées au dossier applicatif.</p>
+
+        <h2>Cookies</h2>
+        <p>Seuls des cookies techniques de session et de sécurité sont utilisés. Aucun cookie publicitaire n'est déposé.</p>
+    </div>
+</section>
+{% endblock %}

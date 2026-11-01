@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LeBonFoyer — Adopter un chat ou un chien en confiance{% endblock %}
+{% block meta_description %}Adoptez un chat ou un chien près de chez vous : annonces responsables, sevrage contrôlé, identification obligatoire et remise en mains propres.{% endblock %}
+
+{% block structured_data %}
+    {{ seo_json_ld(seo_item_list(listings, 'Dernières annonces')) }}
+{% endblock %}
+
+{% block body %}
+<section class="hero">
+    <div class="container hero-grid">
+        <div>
+            <h1>Un foyer aimant,<br>pas une transaction.</h1>
+            <p class="lead">
+                LeBonFoyer met en relation adoptants et cédants autour d'annonces responsables.
+                Remise en mains propres uniquement, identification obligatoire et règles de sevrage strictes.
+            </p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="{{ path('app_listing_index') }}">Découvrir les annonces</a>
+                <a class="btn btn-secondary" href="{{ path('app_register') }}">Je propose un animal</a>
+            </div>
+            <div class="stats">
+                <div><strong>{{ listingCount }}</strong><span>animaux à adopter</span></div>
+                <div><strong>{{ userCount }}</strong><span>membres inscrits</span></div>
+                <div><strong>0 €</strong><span>de frais sur la plateforme</span></div>
+            </div>
+        </div>
+        <div class="hero-art">
+            <div class="emoji" aria-hidden="true">🐈‍⬛🐕</div>
+            <blockquote>« Adopter, c'est s'engager pour une vie. »</blockquote>
+            <cite>La charte LeBonFoyer</cite>
+        </div>
+    </div>
+</section>
+
+<section class="section-sm">
+    <div class="container">
+        <form class="search-card" method="get" action="{{ path('app_listing_index') }}">
+            <div class="field">
+                <label for="home-species">Espèce</label>
+                <select id="home-species" name="species">
+                    <option value="">Chats et chiens</option>
+                    <option value="cat">Chat</option>
+                    <option value="dog">Chien</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="home-city">Ville</label>
+                <input id="home-city" type="search" name="city" placeholder="Ex. : Lyon, Nantes…">
+            </div>
+            <div class="field" style="display:flex;align-items:end;">
+                <button class="btn btn-primary btn-block" type="submit">Rechercher</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <h2>Les dernières annonces</h2>
+                <p>Des animaux identifiés, sevrés et remis en mains propres.</p>
+            </div>
+            <a class="btn btn-ghost btn-sm" href="{{ path('app_listing_index') }}">Tout voir</a>
+        </div>
+
+        {% if listings is empty %}
+            <div class="empty-state">
+                <div class="emoji" aria-hidden="true">🐾</div>
+                <h3>Les premières annonces arrivent bientôt</h3>
+                <p class="muted">Vous proposez un chat ou un chien à l'adoption ? Créez votre compte cédant pour publier une annonce.</p>
+                <a class="btn btn-primary" href="{{ path('app_register') }}">Créer une annonce</a>
+            </div>
+        {% else %}
+            <div class="listing-grid">
+                {% for listing in listings %}
+                    {{ include('listing/_card.html.twig', {listing: listing}) }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section-sm">
+    <div class="container grid-3">
+        <div class="panel">
+            <h3>🛡️ Des règles claires</h3>
+            <p class="muted">Pas de remise avant 8 semaines, identification obligatoire, aucun prix pour les particuliers.</p>
+            <a href="{{ path('app_welfare_rules') }}">Lire les règles →</a>
+        </div>
+        <div class="panel">
+            <h3>🤝 Remise en mains propres</h3>
+            <p class="muted">La rencontre se fait au domicile du cédant ou dans un rayon proche. Jamais de livraison.</p>
+            <a href="{{ path('app_welfare_rules') }}">Comment ça marche →</a>
+        </div>
+        <div class="panel">
+            <h3>🔒 Données protégées</h3>
+            <p class="muted">Compte vérifié, messages modérés, export et suppression de vos données à tout moment.</p>
+            <a href="{{ path('app_privacy') }}">Confidentialité →</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

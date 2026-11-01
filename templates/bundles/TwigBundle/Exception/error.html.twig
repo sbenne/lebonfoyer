@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Une erreur est survenue — LeBonFoyer{% endblock %}
+{% block meta_description %}Une erreur temporaire empêche l’affichage de cette page. Réessayez dans quelques instants ou revenez à l’accueil.{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block canonical %}{% endblock %}
+
+{% block body %}
+<section class="section">
+    <div class="container panel-narrow" style="text-align:center;">
+        <div class="emoji" aria-hidden="true" style="font-size:3.5rem;">🐾</div>
+        <h1>Une erreur est survenue</h1>
+        <p class="lead">Le service rencontre un problème temporaire. Merci de réessayer dans quelques instants.</p>
+        <p>
+            <a class="btn btn-primary" href="{{ path('app_home') }}">Retour à l’accueil</a>
+            <a class="btn btn-ghost" href="{{ path('app_listing_index') }}">Voir les annonces</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

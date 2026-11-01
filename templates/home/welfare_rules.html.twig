@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Règles de bien-être animal : sevrage, identification, remise — LeBonFoyer{% endblock %}
+{% block meta_description %}Les règles LeBonFoyer : pas de remise avant 8 semaines, avertissement pour un chaton de 8 à 12 semaines, identification obligatoire, don sans prix pour les particuliers et remise en mains propres.{% endblock %}
+
+{% block structured_data %}
+    {{ seo_json_ld([
+        seo_breadcrumbs([
+            {'name': 'Accueil', 'url': seo_route('app_home')},
+            {'name': 'Bien-être animal', 'url': seo_route('app_welfare_rules')}
+        ]),
+        seo_faq([
+            {
+                'question': 'À quel âge un chaton peut-il être remis à l’adoptant ?',
+                'answer': 'La remise est bloquée avant 8 semaines. Entre 8 et 12 semaines, la réservation est possible mais un avertissement doit être confirmé. À partir de 12 semaines, aucun avertissement n’est nécessaire.'
+            },
+            {
+                'question': 'À quel âge un chiot peut-il être remis à l’adoptant ?',
+                'answer': 'La remise est bloquée avant 8 semaines. À partir de 8 semaines, elle est autorisée sans avertissement pour un chien.'
+            },
+            {
+                'question': 'L’animal doit-il être identifié ?',
+                'answer': 'Oui. Chaque chat et chaque chien doit être identifié par puce électronique ou tatouage, et le numéro d’identification est obligatoire dans l’annonce.'
+            },
+            {
+                'question': 'Un particulier peut-il vendre un animal sur LeBonFoyer ?',
+                'answer': 'Non. Un particulier peut uniquement proposer un don, sans prix, sans paiement et sans expédition. Les associations et professionnels doivent fournir un numéro RNA ou SIREN vérifié.'
+            },
+            {
+                'question': 'Où se déroule la remise de l’animal ?',
+                'answer': 'La remise se fait en mains propres, au domicile du cédant ou dans un rayon proche de sa ville. La plateforme n’organise ni livraison ni transport.'
+            }
+        ])
+    ]) }}
+{% endblock %}
+
+{% block body %}
+<nav class="breadcrumbs container" aria-label="Fil d'Ariane">
+    <a href="{{ path('app_home') }}">Accueil</a>
+    <span aria-hidden="true">›</span>
+    <span aria-current="page">Bien-être animal</span>
+</nav>
+<div class="page-head">
+    <div class="container">
+        <h1>Règles de bien-être animal</h1>
+        <p>Ces règles sont appliquées automatiquement à chaque annonce et à chaque réservation.</p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container split">
+        <div class="prose">
+            <h2>Sevrage et âge de remise</h2>
+            <ul>
+                <li><strong>Moins de 8 semaines :</strong> la remise est bloquée pour les chats comme pour les chiens.</li>
+                <li><strong>Chat entre 8 et 12 semaines :</strong> la réservation est possible mais un avertissement doit être confirmé explicitement par le cédant.</li>
+                <li><strong>Chat à partir de 12 semaines :</strong> aucun avertissement.</li>
+                <li><strong>Chien à partir de 8 semaines :</strong> autorisé sans avertissement.</li>
+            </ul>
+            <p>La date de remise ne peut jamais être dans le passé, et la date de naissance ne peut pas être dans le futur.</p>
+
+            <h2>Identification</h2>
+            <p>Chaque chat et chaque chien doit être identifié par puce électronique ou tatouage. Le numéro est obligatoire dans l'annonce.</p>
+
+            <h2>Statut du cédant</h2>
+            <ul>
+                <li><strong>Particulier :</strong> don uniquement. Aucun prix, aucun paiement, aucune expédition.</li>
+                <li><strong>Association :</strong> numéro RNA ou SIREN vérifié.</li>
+                <li><strong>Professionnel :</strong> SIREN, numéro de portée/élevage et mentions légales.</li>
+            </ul>
+
+            <h2>Remise en mains propres</h2>
+            <p>La remise se fait au domicile du cédant ou dans un rayon proche de sa ville. La plateforme n'organise ni livraison ni transport.</p>
+
+            <h2>Engagement de l'adoptant</h2>
+            <p>L'adoptant renseigne son logement, la présence d'un jardin ou d'une terrasse, d'autres animaux et d'enfants. Le cédant peut poser jusqu'à 10 questions complémentaires.</p>
+        </div>
+
+        <aside class="panel">
+            <h3>Dates clés</h3>
+            <p class="muted small">Pour un animal né le 1er janvier :</p>
+            <p><strong>Chat</strong><br>Sevrage minimum : 26 février<br>Âge recommandé : 26 mars</p>
+            <p><strong>Chien</strong><br>Sevrage minimum : 26 février<br>Âge recommandé : 26 février</p>
+            <hr>
+            <p class="small muted">Les dates sont calculées à minuit et contrôlées à chaque réservation.</p>
+            <a class="btn btn-primary btn-block" href="{{ path('app_listing_index') }}">Voir les annonces</a>
+        </aside>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ listing.name }}, {{ listing.species|species_label|lower }} à adopter à {{ listing.city }} — LeBonFoyer{% endblock %}
+{% block meta_description %}{{ listing.name }}, {{ listing.species|species_label|lower }} à adopter à {{ listing.city }} ({{ listing.postalCode }}). {{ listing.description|striptags|replace({"\n": ' ', "\r": ' '})|trim|slice(0, 120) }} — LeBonFoyer.{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block social_image %}
+    {% if listing.coverPhoto %}
+        <meta property="og:image" content="{{ absolute_url(asset(listing.coverPhoto.filename)) }}">
+        <meta property="og:image:type" content="image/webp">
+        <meta property="og:image:alt" content="{{ listing.name }}, {{ listing.species|species_label|lower }} à adopter à {{ listing.city }}">
+        <meta name="twitter:image" content="{{ absolute_url(asset(listing.coverPhoto.filename)) }}">
+        <meta name="twitter:image:alt" content="{{ listing.name }}, {{ listing.species|species_label|lower }} à adopter à {{ listing.city }}">
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+{% block preload %}
+    {% if listing.coverPhoto %}
+        <link rel="preload" as="image" href="{{ asset(listing.coverPhoto.filename) }}" fetchpriority="high">
+    {% endif %}
+{% endblock %}
+{% block structured_data %}
+    {{ seo_json_ld([
+        seo_listing(listing),
+        seo_breadcrumbs([
+            {'name': 'Accueil', 'url': seo_route('app_home')},
+            {'name': 'Annonces', 'url': seo_route('app_listing_index')},
+            {'name': listing.species|species_label, 'url': seo_route('app_listing_index', {'species': listing.species.value})},
+            {'name': listing.name, 'url': seo_route('app_listing_show', {'id': listing.id})}
+        ])
+    ]) }}
+{% endblock %}
+
+{% block body %}
+<nav class="breadcrumbs container" aria-label="Fil d'Ariane">
+    <a href="{{ path('app_home') }}">Accueil</a>
+    <span aria-hidden="true">›</span>
+    <a href="{{ path('app_listing_index') }}">Annonces</a>
+    <span aria-hidden="true">›</span>
+    <a href="{{ path('app_listing_index', {species: listing.species.value}) }}">{{ listing.species|species_label }}</a>
+    <span aria-hidden="true">›</span>
+    <span aria-current="page">{{ listing.name }}</span>
+</nav>
+<div class="page-head">
+    <div class="container">
+        <p class="small"><a href="{{ path('app_listing_index') }}">← Toutes les annonces</a></p>
+    </div>
+</div>
+
+<section class="section-sm">
+    <div class="container split">
+        <div>
+            {% set cover = listing.coverPhoto %}
+            <div class="gallery">
+                {% if cover %}
+                    <img class="gallery-main" src="{{ asset(cover.filename) }}"
+                         alt="{{ listing.name }}, {{ listing.species|species_label|lower }} à adopter à {{ listing.city }}"
+                         {% if cover.width and cover.height %}width="{{ cover.width }}" height="{{ cover.height }}"{% endif %}
+                         fetchpriority="high" decoding="async">
+                {% else %}
+                    <div class="cover-placeholder" style="border-radius:16px;" aria-hidden="true">🐾</div>
+                {% endif %}
+
+                {% if listing.photos|length > 1 %}
+                    <div class="gallery-thumbs">
+                        {% for photo in listing.photos %}
+                            <a href="{{ asset(photo.filename) }}" target="_blank" rel="noopener">
+                                <img src="{{ asset(photo.filename) }}"
+                                     alt="Photo {{ loop.index }} de {{ listing.name }}, {{ listing.species|species_label|lower }} à adopter à {{ listing.city }}"
+                                     {% if photo.width and photo.height %}width="{{ photo.width }}" height="{{ photo.height }}"{% endif %}
+                                     loading="lazy" decoding="async">
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="panel" style="margin-top:1.5rem;">
+                <div class="section-head" style="margin-bottom:.5rem;">
+                    <h1 style="font-size:2rem;margin:0;">{{ listing.name }}</h1>
+                    <span class="badge badge-{{ listing.status.value }}">{{ listing.status|listing_status_label }}</span>
+                </div>
+                <div class="detail-meta">
+                    <span>{{ listing.species|species_label }}</span>
+                    {% if listing.birthDate %}<span>Né{{ listing.species.value == 'cat' ? 'e' : '' }} le {{ listing.birthDate|fr_date }} ({{ listing.birthDate|age }}){% if listing.birthDateEstimated %} — date estimée{% endif %}</span>{% endif %}
+                    <span>📍 {{ listing.city }} ({{ listing.postalCode }})</span>
+                    <span>Identifié : {{ listing.identificationNumber }}</span>
+                </div>
+
+                <p class="description">{{ listing.description|nl2br }}</p>
+
+                {% if listing.birthDate %}
+                    <div class="notice notice-info">
+                        <h3>Sevrage et remise</h3>
+                        <p>
+                            Remise possible à partir du <strong>{{ earliest_handover(listing.species, listing.birthDate)|fr_date }}</strong>.
+                            {% if listing.species.value == 'cat' %}
+                                L'âge recommandé est de <strong>{{ recommended_handover(listing.species, listing.birthDate)|fr_date }}</strong>.
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+
+                {% if listing.questions|length > 0 %}
+                    <div class="notice notice-info">
+                        <h3>Questions posées par le cédant</h3>
+                        <ol>
+                            {% for question in listing.questions %}
+                                <li>{{ question.label }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                {% endif %}
+
+                <div class="notice notice-warning">
+                    <h3>Notre engagement</h3>
+                    <p>Remise en mains propres uniquement, au domicile du cédant ou dans un rayon proche. Aucune livraison, aucun paiement en ligne.</p>
+                </div>
+            </div>
+        </div>
+
+        <aside>
+            <div class="panel">
+                <h2 style="font-size:1.1rem;">Cédant</h2>
+                <div class="seller-card">
+                    <div class="avatar">{{ listing.cedant ? listing.cedant.fullName|initials : '?' }}</div>
+                    <div>
+                        <strong>{{ listing.cedant ? listing.cedant.fullName : 'Inconnu' }}</strong><br>
+                        <span class="muted small">
+                            {{ listing.cedant and listing.cedant.cedantStatus ? listing.cedant.cedantStatus|cedant_status_label : 'Particulier' }}
+                            · {{ listing.cedant ? listing.cedant.city : listing.city }}
+                        </span>
+                    </div>
+                </div>
+
+                <p style="font-size:1.6rem;font-weight:800;margin:1.25rem 0 .25rem;">
+                    {{ listing.price|price_label(listing.cedant ? listing.cedant.cedantStatus : null) }}
+                </p>
+                <p class="muted small">Aucun paiement n'est traité par la plateforme.</p>
+
+                {% if app.user %}
+                    {% if listing.cedant and listing.cedant.id == app.user.id %}
+                        <a class="btn btn-secondary btn-block" href="{{ path('app_listing_edit', {id: listing.id}) }}">Modifier mon annonce</a>
+                    {% else %}
+                        {% if listing.status.value == 'published' and is_granted('ROLE_ADOPTANT') %}
+                            <a class="btn btn-primary btn-block" href="{{ path('app_application_new', {id: listing.id}) }}">Réserver cet animal</a>
+                        {% elseif listing.status.value == 'reserved' %}
+                            <p class="notice notice-warning small">Cet animal est déjà réservé. Vous pouvez contacter le cédant pour être informé d'une annulation.</p>
+                        {% endif %}
+                        <form method="post" action="{{ path('app_message_start', {id: listing.id}) }}" style="margin-top:.6rem;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('contact_listing_' ~ listing.id) }}">
+                            <button class="btn btn-ghost btn-block" type="submit">Contacter le cédant</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <a class="btn btn-primary btn-block" href="{{ path('app_login') }}">Se connecter pour réserver</a>
+                    <p class="muted small" style="margin-top:.5rem;">Un compte adoptant vérifié est nécessaire.</p>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <h3>Signaler une annonce</h3>
+                <p class="muted small">Un doute sur le bien-être de cet animal ? Écrivez à signalement@lebonfoyer.local en précisant l'annonce n°{{ listing.id }}.</p>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

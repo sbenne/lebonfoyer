@@ -1,0 +1,28 @@
+<article class="listing-card">
+    <a href="{{ path('app_listing_show', {id: listing.id}) }}" aria-label="Voir {{ listing.name }}">
+        {% set cover = listing.coverPhoto %}
+        {% if cover %}
+            <img class="cover" src="{{ asset(cover.filename) }}"
+                 alt="{{ listing.name }}, {{ listing.species|species_label|lower }} à adopter à {{ listing.city }}"
+                 {% if cover.width and cover.height %}width="{{ cover.width }}" height="{{ cover.height }}"{% endif %}
+                 loading="lazy" decoding="async">
+        {% else %}
+            <div class="cover-placeholder" aria-hidden="true">🐾</div>
+        {% endif %}
+    </a>
+    <div class="body">
+        <div class="title-row">
+            <h3><a href="{{ path('app_listing_show', {id: listing.id}) }}">{{ listing.name }}</a></h3>
+            <span class="badge badge-{{ listing.status.value }}">{{ listing.status|listing_status_label }}</span>
+        </div>
+        <div class="meta">
+            {{ listing.species|species_label }}
+            {% if listing.birthDate %} · {{ listing.birthDate|age }}{% endif %}
+            · {{ listing.city }} ({{ listing.postalCode }})
+        </div>
+        <div class="card-foot">
+            <strong>{{ listing.price|price_label(listing.cedant ? listing.cedant.cedantStatus : null) }}</strong>
+            <span class="muted small">{{ listing.publishedAt ? listing.publishedAt|time_ago : 'Brouillon' }}</span>
+        </div>
+    </div>
+</article>
