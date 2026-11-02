@@ -24,3 +24,15 @@ tasks:
   example:
     - run: "date"
       cwd: "~"
+
+  # Build Encore assets locally then upload them into the release.
+  assets:build:
+    - runLocally: "npm run build"
+
+  assets:upload:
+    - upload:
+        src: "public/build/"
+        dest: "{{release_path}}/public/build"
+
+after:
+  deploy:update_code: ["assets:upload", "assets:build"]
