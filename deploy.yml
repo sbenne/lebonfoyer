@@ -1,0 +1,26 @@
+# You can import other php or yaml recipes.
+# Import recipes directly from recipe/ folder.
+import:
+  - recipe/symfony.php
+
+config:
+  repository: "git@github.com:sbenne/lebonfoyer.git"
+  update_code_strategy: local_archive
+  keep_releases: 5
+  allow_anonymous_stats: false
+
+# Hosts
+hosts:
+  "vps-lebonfoyer":
+    remote_user: debian
+    hostname: 151.80.145.157
+    port: 49160
+    identity_file: "~/.ssh/id_vps_detective_culinaire"
+    deploy_path: "/var/www/lebonfoyer"
+
+# Define tasks as list of steps to run,
+# or use list of strings to define group task.
+tasks:
+  example:
+    - run: "date"
+      cwd: "~"
